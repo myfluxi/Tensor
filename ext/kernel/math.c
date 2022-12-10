@@ -17,6 +17,10 @@
 #include <ext/standard/php_string.h>
 #include <ext/standard/php_math.h>
 #include <ext/standard/php_rand.h>
+#if PHP_VERSION_ID >= 80200
+#include <ext/random/php_random.h>
+#include <ext/standard/basic_functions.h>
+#endif
 
 #include "php_ext.h"
 #include "kernel/main.h"
@@ -188,7 +192,11 @@ zend_long zephir_mt_rand(zend_long min, zend_long max)
 		return 0;
 	}
 
+#if PHP_VERSION_ID < 80200
 	if (!BG(mt_rand_is_seeded)) {
+#else
+	if (!RANDOM_G(mt19937_seeded)) {
+#endif
 		php_mt_srand(GENERATE_SEED());
 	}
 

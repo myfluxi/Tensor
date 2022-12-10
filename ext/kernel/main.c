@@ -568,7 +568,11 @@ void zephir_get_arg(zval *return_value, zend_long idx)
 	}
 
 	arg_count = ZEND_CALL_NUM_ARGS(ex);
-    if (zend_forbid_dynamic_call("func_get_arg()") == FAILURE) {
+#if PHP_VERSION_ID >= 80200
+	if (get_active_function_or_method_name() == FAILURE) {
+#else
+	if (zend_forbid_dynamic_call("func_get_arg()") == FAILURE) {
+#endif
         RETURN_FALSE;
     }
 
